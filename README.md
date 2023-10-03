@@ -1,8 +1,12 @@
 # URL Lookup Servie
 This service allows users to pass a URL and get back a response indicating if it is known to contain malware.
 
+## Architecture Diagram
+This diagram is taken from [optimize-your-spring-boot-application-for-aws-fargate/](https://aws.amazon.com/blogs/containers/optimize-your-spring-boot-application-for-aws-fargate/). It is more or less accurate.
+![architecture-diagram](https://github.com/sbakhit/urlinfo/assets/22949276/9d6064f0-c9ef-4116-b259-492b72186563)
+
 ## Entrypoint
-```
+```bash
 URLInfoAppLB-1524785317.us-east-1.elb.amazonaws.com
 ```
 
