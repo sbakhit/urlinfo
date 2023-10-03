@@ -119,3 +119,19 @@ $ docker push 221643473271.dkr.ecr.us-east-1.amazonaws.com/urlinfo-app:latest
 ```bash
 $ aws ecs update-service --cluster URLInfoAppClusterUpdate --service URLInfoAppService --force-new-deployment
 ```
+
+## Thoughts for "Give some thought to the following" Section
+
+### The size of the URL list could grow infinitely, how might you scale this beyond the memory capacity of this VM? **_IMPLEMENTED_**
+This would affect the choice of DB. DynamoDB is best here due to its SLA HA of 99.99% and its auto scaling capability. We can also play with the configurations to set some conditions for autoscaling and/or replication
+
+### The number of requests may exceed the capacity of this VM, how might you solve that? **_IMPLEMENTED_**
+In order to address this, I made the container(s) set behind an Application Load Balancer and created an Auto Scaling Group with a minimun of 2 and a maximum of 6 containers (each with 2 GB of memory and 1 vCPU). The condition to scale out/in is 60% of CPU usage.
+
+### What are some strategies you might use to update the service with new URLs? Updates may be as much as 5 thousand URLs a day with updates arriving every 10 minutes. **_IMPLEMENTED_**
+Since the requirement is 5000 writes per day, we have about 35 writes per 10 minutes. So, setting WCU (Write Capacity Unit) to 5 WCU (I think this is the default) in DynamoDB should satisfy this requirement. Here's why:
+```
+Assuming 5KB max per write:
+  - 5 WCU = 1 write (up to 5 KB) per second capacity
+  - this means I should be able to do up to 600 writes per 10 minutes --> more than enough for the 35 writes per 10 minutes requirement
+```
